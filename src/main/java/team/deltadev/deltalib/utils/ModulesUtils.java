@@ -19,7 +19,7 @@ public class ModulesUtils {
     private final Map<String, Supplier<Object>> modules;
     private YamlDocument modulesConfig;
 
-    public ModulesUtils(DeltaLib plugin) {
+    public ModulesUtils(JavaPlugin plugin) {
         this.plugin = plugin;
         this.modules = new HashMap<>();
     }
