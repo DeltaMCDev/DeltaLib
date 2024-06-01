@@ -39,6 +39,18 @@ public class ChatUtils {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
     /**
+     * Translate color codes and parse placeholders in a list of messages for a specific player.
+     *
+     * @param player   The player for whom to parse the messages.
+     * @param messages The list of messages to colorize and parse.
+     * @return The list of colorized and parsed messages.
+     */
+    public static List<String> colourList(Player player, List<String> messages) {
+        return messages.stream()
+                .map(message -> colour(player, message))
+                .collect(Collectors.toList());
+    }
+    /**
      * Translate color codes .
      *
      * @param message The message to colorize and parse.
@@ -47,6 +59,7 @@ public class ChatUtils {
     public static String colour2 (String message) {
         return net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', message);
     }
+
     /**
      * Translate color codes for each string in the list.
      *
