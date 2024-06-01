@@ -27,6 +27,8 @@ public abstract class CommandHandler implements CommandExecutor, TabCompleter {
 
     private static CommandMap commandMap;
 
+    private static final String CONFIG_FILENAME = "settings.yml";
+
     /**
      * Constructor for CommandHandler.
      *
@@ -34,19 +36,8 @@ public abstract class CommandHandler implements CommandExecutor, TabCompleter {
      * @param plugin The JavaPlugin instance that owns the command.
      */
     public CommandHandler(String name, JavaPlugin plugin) {
-        this(name, plugin, null);
-    }
-
-    /**
-     * Constructor for CommandHandler with a specific config file.
-     *
-     * @param name   The name of the command.
-     * @param plugin The JavaPlugin instance that owns the command.
-     * @param config The YamlDocument instance representing the config file.
-     */
-    public CommandHandler(String name, JavaPlugin plugin, YamlDocument config) {
         this.name = name;
-        this.config = config;
+        this.config = ConfigUtils.createConfig(plugin, CONFIG_FILENAME);
 
         try {
             if (commandMap == null) {
@@ -140,15 +131,6 @@ public abstract class CommandHandler implements CommandExecutor, TabCompleter {
     }
 
     /**
-     * Setter for the config file.
-     *
-     * @param config The YamlDocument instance representing the config file.
-     */
-    public void setConfig(YamlDocument config) {
-        this.config = config;
-    }
-
-    /**
      * Getter for the command name.
      *
      * @return The command name.
@@ -209,14 +191,5 @@ public abstract class CommandHandler implements CommandExecutor, TabCompleter {
      */
     public void setPermission(String permission) {
         this.permission = permission;
-    }
-
-    /**
-     * Setter for the command config file.
-     *
-     * @param config The YamlDocument instance representing the config file.
-     */
-    public void setConfigFile(YamlDocument config) {
-        this.config = config;
     }
 }
