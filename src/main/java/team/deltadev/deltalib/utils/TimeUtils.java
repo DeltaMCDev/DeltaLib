@@ -6,18 +6,18 @@ import java.util.HashMap;
 import java.util.Map;
 public class TimeUtils {
 
-    private static final Map<Character, String> TIME_UNITS = new HashMap<>();
+    private static final Map<String, String> TIME_UNITS = new HashMap<>();
 
     static {
-        TIME_UNITS.put('s', "second");
-        TIME_UNITS.put('m', "minute");
-        TIME_UNITS.put('h', "hour");
-        TIME_UNITS.put('d', "day");
-        TIME_UNITS.put('w', "week");
-        TIME_UNITS.put('M', "month");
-        TIME_UNITS.put('y', "year");
+        TIME_UNITS.put("s", "second");
+        TIME_UNITS.put("m", "minute");
+        TIME_UNITS.put("h", "hour");
+        TIME_UNITS.put("d", "day");
+        TIME_UNITS.put("w", "week");
+        TIME_UNITS.put("M", "month");
+        TIME_UNITS.put("y", "year");
+        TIME_UNITS.put("ms", "millisecond");
     }
-
     /**
      * Converts a short time unit (e.g., "1d", "2h") to a full-formatted string (e.g., "1 day", "2 hours").
      *
@@ -46,7 +46,6 @@ public class TimeUtils {
 
         return value + " " + unitFull + (value > 1 ? "s" : "");
     }
-
     /**
      * Converts a duration string to its equivalent in seconds.
      *
@@ -159,6 +158,68 @@ public class TimeUtils {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+
+    /**
+     * Converts a duration string to its equivalent in milliseconds.
+     *
+     * @param durationStr The duration string (e.g., "1d", "2h").
+     * @return The duration in milliseconds.
+     */
+    public static long convertToMilliseconds(String durationStr) {
+        if (durationStr == null || durationStr.length() < 2) {
+            throw new IllegalArgumentException("Invalid duration format.");
+        }
+
+        String unit = durationStr.substring(durationStr.length() - 2);
+        String valueStr = durationStr.substring(0, durationStr.length() - 2);
+
+        int value;
+        try {
+            value = Integer.parseInt(valueStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid number in duration format.", e);
+        }
+
+        switch (unit) {
+            case "s": return value * 1000L;
+            case "m": return value * 60000L;
+            case "h": return value * 3600000L;
+            case "d": return value * 86400000L;
+            case "w": return value * 604800000L;
+            case "M": return value * 2592000000L;
+            case "y": return value * 31536000000L;
+            case "ms": return value;
+            default: throw new IllegalArgumentException("Invalid time unit in duration format.");
+        }
+    }
+
+    public static String formatMilliseconds(long milliseconds) {
+        if (milliseconds < 1000) {
+            return milliseconds + " millisecond" + (milliseconds == 1 ? "" : "s");
+        } else if (milliseconds < 60000) {
+            long seconds = milliseconds / 1000;
+            return seconds + " second" + (seconds == 1 ? "" : "s");
+        } else if (milliseconds < 3600000) {
+            long minutes = milliseconds / 60000;
+            return minutes + " minute" + (minutes == 1 ? "" : "s");
+        } else if (milliseconds < 86400000) {
+            long hours = milliseconds / 3600000;
+            return hours + " hour" + (hours == 1 ? "" : "s");
+        } else if (milliseconds < 604800000) {
+            long days = milliseconds / 86400000;
+            return days + " day" + (days == 1 ? "" : "s");
+        } else if (milliseconds < 2592000000L) {
+            long weeks = milliseconds / 604800000;
+            return weeks + " week" + (weeks == 1 ? "" : "s");
+        } else if (milliseconds < 31536000000L) {
+            long months = milliseconds / 2592000000L;
+            return months + " month" + (months == 1 ? "" : "s");
+        } else {
+            long years = milliseconds / 31536000000L;
+            return years + " year" + (years == 1 ? "" : "s");
         }
     }
 }
