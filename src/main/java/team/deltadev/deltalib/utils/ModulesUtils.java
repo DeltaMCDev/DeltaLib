@@ -37,9 +37,9 @@ public class ModulesUtils {
                         Object moduleInstance = modules.get(moduleName);
                         if (moduleInstance instanceof Listener) {
                             Bukkit.getPluginManager().registerEvents((Listener) moduleInstance, plugin);
-                            plugin.getLogger().log(Level.INFO, "Module " + moduleName + " enabled!");
+                            ChatUtils.send(Level.INFO, "Module " + moduleName + " enabled!");
                         } else {
-                            plugin.getLogger().log(Level.WARNING, "Module " + moduleName + " could not be enabled as it is not a valid listener.");
+                            ChatUtils.send(Level.WARNING,"Module " + moduleName + " could not be enabled as it is not a valid listener.");
                         }
                     }
                 }

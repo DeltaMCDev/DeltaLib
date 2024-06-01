@@ -4,6 +4,9 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import team.deltadev.deltalib.utils.ChatUtils;
+
+import java.util.logging.Level;
 
 public class VaultIntegration {
 
@@ -17,12 +20,12 @@ public class VaultIntegration {
      */
     public static boolean setupEconomy(JavaPlugin plugin) {
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
-            plugin.getLogger().severe("Vault is not installed!");
+            ChatUtils.send(Level.SEVERE, "Vault is not installed!");
             return false;
         }
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
-            plugin.getLogger().severe("No economy provider found!");
+            ChatUtils.send(Level.SEVERE,"No economy provider found!");
             return false;
         }
         economy = rsp.getProvider();
