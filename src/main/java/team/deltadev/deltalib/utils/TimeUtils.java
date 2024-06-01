@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 public class TimeUtils {
 
     private static final Map<String, String> TIME_UNITS = new HashMap<>();
@@ -18,6 +19,7 @@ public class TimeUtils {
         TIME_UNITS.put("y", "year");
         TIME_UNITS.put("ms", "millisecond");
     }
+
     /**
      * Converts a short time unit (e.g., "1d", "2h") to a full-formatted string (e.g., "1 day", "2 hours").
      *
@@ -29,8 +31,12 @@ public class TimeUtils {
             throw new IllegalArgumentException("Invalid short time format.");
         }
 
-        char unit = shortTime.charAt(shortTime.length() - 1);
-        String valueStr = shortTime.substring(0, shortTime.length() - 1);
+        String unit = shortTime.substring(shortTime.length() - 2);
+        if (!TIME_UNITS.containsKey(unit)) {
+            unit = shortTime.substring(shortTime.length() - 1);
+        }
+
+        String valueStr = shortTime.substring(0, shortTime.length() - unit.length());
 
         int value;
         try {
@@ -46,6 +52,7 @@ public class TimeUtils {
 
         return value + " " + unitFull + (value > 1 ? "s" : "");
     }
+
     /**
      * Converts a duration string to its equivalent in seconds.
      *
@@ -57,8 +64,12 @@ public class TimeUtils {
             throw new IllegalArgumentException("Invalid duration format.");
         }
 
-        char unit = durationStr.charAt(durationStr.length() - 1);
-        String valueStr = durationStr.substring(0, durationStr.length() - 1);
+        String unit = durationStr.substring(durationStr.length() - 2);
+        if (!TIME_UNITS.containsKey(unit)) {
+            unit = durationStr.substring(durationStr.length() - 1);
+        }
+
+        String valueStr = durationStr.substring(0, durationStr.length() - unit.length());
 
         int value;
         try {
@@ -68,13 +79,13 @@ public class TimeUtils {
         }
 
         switch (unit) {
-            case 's': return value;
-            case 'm': return value * 60;
-            case 'h': return value * 3600;
-            case 'd': return value * 86400;
-            case 'w': return value * 604800;
-            case 'M': return value * 2592000;
-            case 'y': return value * 31536000;
+            case "s": return value;
+            case "m": return value * 60;
+            case "h": return value * 3600;
+            case "d": return value * 86400;
+            case "w": return value * 604800;
+            case "M": return value * 2592000;
+            case "y": return value * 31536000;
             default: throw new IllegalArgumentException("Invalid time unit in duration format.");
         }
     }
@@ -161,7 +172,6 @@ public class TimeUtils {
         }
     }
 
-
     /**
      * Converts a duration string to its equivalent in milliseconds.
      *
@@ -174,7 +184,11 @@ public class TimeUtils {
         }
 
         String unit = durationStr.substring(durationStr.length() - 2);
-        String valueStr = durationStr.substring(0, durationStr.length() - 2);
+        if (!TIME_UNITS.containsKey(unit)) {
+            unit = durationStr.substring(durationStr.length() - 1);
+        }
+
+        String valueStr = durationStr.substring(0, durationStr.length() - unit.length());
 
         int value;
         try {
@@ -196,6 +210,12 @@ public class TimeUtils {
         }
     }
 
+    /**
+     * Converts milliseconds to a full-formatted time string (e.g., "1 day", "2 hours").
+     *
+     * @param milliseconds The time in milliseconds.
+     * @return The full-formatted time string.
+     */
     public static String formatMilliseconds(long milliseconds) {
         if (milliseconds < 1000) {
             return milliseconds + " millisecond" + (milliseconds == 1 ? "" : "s");
