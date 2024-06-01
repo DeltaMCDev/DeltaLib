@@ -192,6 +192,7 @@ public abstract class CommandHandler implements CommandExecutor, TabCompleter {
     public void setAliases(List<String> aliases) {
         this.aliases = aliases;
     }
+
     /**
      * Getter for the command permission.
      *
@@ -208,5 +209,14 @@ public abstract class CommandHandler implements CommandExecutor, TabCompleter {
      */
     public void setPermission(String permission) {
         this.permission = permission;
+    }
+
+    /**
+     * Setter for the command config file.
+     *
+     * @param config The YamlDocument instance representing the config file.
+     */
+    public void setConfigFile(YamlDocument config) {
+        this.config = config;
     }
 }
