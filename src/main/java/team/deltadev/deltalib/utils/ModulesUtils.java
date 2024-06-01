@@ -1,4 +1,5 @@
 package team.deltadev.deltalib.utils;
+
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import net.milkbowl.vault.chat.Chat;
@@ -7,7 +8,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.java.JavaPlugin;
-import team.deltadev.deltalib.DeltaLib;
 
 import java.util.HashMap;
 import java.util.Map;
