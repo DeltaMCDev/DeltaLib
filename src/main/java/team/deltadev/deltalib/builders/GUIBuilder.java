@@ -31,6 +31,7 @@ public class GUIBuilder implements Listener {
     private ItemStack previousPageItem;
     private Consumer<InventoryClickEvent> nextPageAction;
     private Consumer<InventoryClickEvent> previousPageAction;
+    private static final Map<Player, GUIBuilder> activeGUIs = new HashMap<>();
 
     public GUIBuilder(String title, int size) {
         this.title = ChatColor.translateAlternateColorCodes('&', title);
@@ -95,6 +96,12 @@ public class GUIBuilder implements Listener {
      * @param player The player to open the GUI for.
      */
     public void open(Player player) {
+        Inventory inventory = createInventory();
+        player.openInventory(inventory);
+        activeGUIs.put(player, this);
+    }
+
+    private Inventory createInventory() {
         Inventory inventory = (inventoryType == null) ? Bukkit.createInventory(null, size, title) :
                 Bukkit.createInventory(null, inventoryType, title);
         if (!pages.isEmpty()) {
@@ -102,7 +109,7 @@ public class GUIBuilder implements Listener {
         } else {
             items.forEach(inventory::setItem);
         }
-        player.openInventory(inventory);
+        return inventory;
     }
 
     /**
@@ -112,16 +119,22 @@ public class GUIBuilder implements Listener {
      */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!event.getView().getTitle().equals(title)) return;
+        if (!(event.getWhoClicked() instanceof Player)) return;
+
+        Player player = (Player) event.getWhoClicked();
+        GUIBuilder guiBuilder = activeGUIs.get(player);
+        if (guiBuilder == null || !event.getView().getTitle().equals(guiBuilder.title)) return;
+
         event.setCancelled(true);
-        Consumer<InventoryClickEvent> action = actions.get(event.getSlot());
+        Consumer<InventoryClickEvent> action = guiBuilder.actions.get(event.getSlot());
         if (action != null) {
             action.accept(event);
         }
-        if (pages.size() > 1) {
-            handlePageChange(event);
+        if (guiBuilder.pages.size() > 1) {
+            guiBuilder.handlePageChange(event);
         }
     }
+
 
     /**
      * Handles inventory close events.
@@ -130,11 +143,19 @@ public class GUIBuilder implements Listener {
      */
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (!event.getView().getTitle().equals(title)) return;
-        if (closeAction != null) {
-            closeAction.accept(event);
+        if (!(event.getPlayer() instanceof Player)) return;
+
+        Player player = (Player) event.getPlayer();
+        GUIBuilder guiBuilder = activeGUIs.get(player);
+        if (guiBuilder == null || !event.getView().getTitle().equals(guiBuilder.title)) return;
+
+        if (guiBuilder.closeAction != null) {
+            guiBuilder.closeAction.accept(event);
         }
+
+        activeGUIs.remove(player);
     }
+
 
     /**
      * Registers the GUI builder as an event listener.
@@ -233,5 +254,4 @@ public class GUIBuilder implements Listener {
             inventory.setItem(inventory.getSize() - 2, previousPageItem);
         }
     }
-
 }
