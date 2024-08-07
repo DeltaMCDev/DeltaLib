@@ -3,11 +3,18 @@ package team.deltadev.deltalib.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Base64;
+import java.util.HashMap;
+
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility class for handling inventory operations, including serialization
@@ -15,50 +22,115 @@ import org.bukkit.inventory.ItemStack;
  */
 public class InventoryUtils {
 
+    private static final HashMap<String, String> inventoryStorage = new HashMap<>();
+
     /**
-     * Serializes an {@link Inventory} to a Base64 encoded string.
+     * Converts an array of ItemStacks to a Base64 encoded string representation.
      *
-     * @param inventory The inventory to be serialized.
-     * @return A Base64 encoded string representing the serialized inventory.
-     * @throws IllegalArgumentException If the inventory is null.
-     * @throws IOException If an I/O error occurs during serialization.
+     * @param itemStacks the array of ItemStacks to convert
+     * @return a Base64 encoded string representation of the ItemStack array
+     * @throws IllegalArgumentException if the ItemStack array is null
+     * @throws IllegalStateException    if there is an error converting the ItemStack array to a Base64 string
      */
-    public static String saveInventoryToBase64(Inventory inventory) throws IllegalArgumentException, IOException {
-        if (inventory == null) {
-            throw new IllegalArgumentException("Inventory cannot be null");
+    public static String itemStackArrayToBase64(@NotNull final ItemStack[] itemStacks) throws IllegalArgumentException, IllegalStateException {
+        if (itemStacks == null) {
+            throw new IllegalArgumentException("ItemStack array cannot be null.");
         }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
-            oos.writeObject(inventory.getContents());
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+             BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
+
+            dataOutput.writeInt(itemStacks.length);
+
+            for (ItemStack itemStack : itemStacks) {
+                dataOutput.writeObject(itemStack);
+            }
+
+            byte[] bytes = outputStream.toByteArray();
+            return Base64.getEncoder().encodeToString(bytes);
+
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to save items stacks.", e);
         }
-        return Base64.getEncoder().encodeToString(baos.toByteArray());
     }
 
     /**
-     * Deserializes an {@link Inventory} from a Base64 encoded string.
+     * Converts an Inventory object to a Base64 encoded string representation.
      *
-     * @param base64 The Base64 encoded string representing the serialized inventory.
-     * @param size The size of the inventory.
-     * @return The deserialized inventory.
-     * @throws IllegalArgumentException If the Base64 string is invalid or if the inventory size is invalid.
-     * @throws IOException If an I/O error occurs during deserialization.
-     * @throws ClassNotFoundException If the class of a serialized object cannot be found.
+     * @param inventory the Inventory object to convert
+     * @return a Base64 encoded string representation of the inventory
+     * @throws IllegalArgumentException if the inventory is null
+     * @throws IllegalStateException    if there is an error converting the inventory to a Base64 string
      */
-    public static Inventory loadInventoryFromBase64(String base64, int size) throws IllegalArgumentException, IOException, ClassNotFoundException {
-        if (base64 == null || base64.isEmpty()) {
-            throw new IllegalArgumentException("Base64 string cannot be null or empty");
+    public static String inventoryToBase64(@NotNull final Inventory inventory) throws IllegalArgumentException, IllegalStateException {
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+             BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
+
+            dataOutput.writeInt(inventory.getSize());
+
+            for (int i = 0; i < inventory.getSize(); i++) {
+                dataOutput.writeObject(inventory.getItem(i));
+            }
+
+            byte[] bytes = outputStream.toByteArray();
+            return Base64.getEncoder().encodeToString(bytes);
+
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to save inventory.", e);
         }
-        if (size <= 0) {
-            throw new IllegalArgumentException("Invalid inventory size");
-        }
-        byte[] data = Base64.getDecoder().decode(base64);
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        ItemStack[] items;
-        try (ObjectInputStream ois = new ObjectInputStream(bais)) {
-            items = (ItemStack[]) ois.readObject();
-        }
-        Inventory inventory = org.bukkit.Bukkit.createInventory(null, size);
-        inventory.setContents(items);
-        return inventory;
     }
+
+    /**
+     * Converts a Base64 encoded string representation of an inventory to an Inventory object.
+     *
+     * @param data the Base64 encoded string representation of an inventory
+     * @return an Inventory object representing the decoded inventory data
+     * @throws IllegalArgumentException if the data string is null
+     * @throws IOException              if there is an error decoding the inventory data
+     */
+    public static Inventory inventoryFromBase64(@NotNull final String data) throws IllegalArgumentException, IOException {
+
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
+             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
+
+            Inventory inventory = Bukkit.createInventory(null, dataInput.readInt());
+
+            for (int i = 0; i < inventory.getSize(); i++) {
+                inventory.setItem(i, (ItemStack) dataInput.readObject());
+            }
+
+            return inventory;
+
+        } catch (ClassNotFoundException e) {
+            throw new IOException("Unable to decode class type.", e);
+        }
+    }
+
+    /**
+     * Converts a Base64 encoded string representation of an array of ItemStacks to an ItemStack array.
+     *
+     * @param data the Base64 encoded string representation of an array of ItemStacks
+     * @return an ItemStack array representing the decoded data
+     * @throws IllegalArgumentException if the data string is null
+     * @throws IOException              if there is an error decoding the data
+     */
+    public static ItemStack[] itemStackArrayFromBase64(@NotNull final String data) throws IllegalArgumentException, IOException {
+
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
+             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
+
+            ItemStack[] items = new ItemStack[dataInput.readInt()];
+
+            for (int i = 0; i < items.length; i++) {
+                items[i] = (ItemStack) dataInput.readObject();
+            }
+
+            return items;
+
+        } catch (ClassNotFoundException e) {
+            throw new IOException("Unable to decode class type.", e);
+        }
+    }
+
 }
