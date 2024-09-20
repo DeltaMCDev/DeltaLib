@@ -1,8 +1,9 @@
-package team.deltadev.deltalib.utils;
+package dev.deltamc.deltalib.utils.server;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.YamlDocument;
-import net.milkbowl.vault.chat.Chat;
+import dev.deltamc.deltalib.utils.chat.ChatUtils;
+import dev.deltamc.deltalib.utils.config.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -24,10 +25,6 @@ public class ModulesUtils {
         this.modules = new HashMap<>();
     }
 
-    /**
-     * Register modules based on the configuration.
-     * This method reads the configuration file, initializes enabled modules, and registers their listeners.
-     */
     public void registerModules(String configFileName) {
         modulesConfig = ConfigUtils.createConfig(plugin, configFileName);
         if (modulesConfig != null) {
@@ -59,23 +56,12 @@ public class ModulesUtils {
         }
     }
 
-    /**
-     * Unregister all registered listeners for modules.
-     * This method unregisters all listeners associated with modules.
-     */
     public void unregisterModules() {
         for (RegisteredListener listener : HandlerList.getRegisteredListeners(plugin)) {
             HandlerList.unregisterAll(listener.getListener());
         }
     }
 
-    /**
-     * Add a module to the map of modules.
-     * This method adds a module with the specified name and supplier to the map.
-     *
-     * @param moduleName     The name of the module.
-     * @param moduleSupplier The supplier for creating the module instance.
-     */
     public void addModule(String moduleName, Supplier<Object> moduleSupplier) {
         modules.put(moduleName, moduleSupplier);
     }

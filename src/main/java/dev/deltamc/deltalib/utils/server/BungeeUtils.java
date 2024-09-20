@@ -1,4 +1,4 @@
-package team.deltadev.deltalib.utils;
+package dev.deltamc.deltalib.utils.server;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class BungeeUtils {
     private final Plugin plugin;
-    private final List<String> supportedPlatforms = Arrays.asList("BungeeCord", "Velocity", "Folia");
+    private final List<String> supportedPlatforms = Arrays.asList("BungeeCord", "Velocity");
 
     public BungeeUtils(Plugin plugin) {
         this.plugin = plugin;
@@ -36,9 +36,6 @@ public class BungeeUtils {
                 out.writeUTF(serverName);
             } else if (platform.equalsIgnoreCase("Velocity")) {
                 out.writeUTF("velocity:connect");
-                out.writeUTF(serverName);
-            } else if (platform.equalsIgnoreCase("Folia")) {
-                out.writeUTF("connect");
                 out.writeUTF(serverName);
             } else {
                 throw new IllegalArgumentException("Unsupported platform: " + platform);

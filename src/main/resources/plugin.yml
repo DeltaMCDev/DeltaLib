@@ -1,4 +1,4 @@
-main: team.deltadev.deltalib.DeltaLib
+main: dev.deltamc.deltalib.DeltaLib
 name: DeltaLib
 version: '${project.version}'
 description: The main Lib class for all the Delta Plugins

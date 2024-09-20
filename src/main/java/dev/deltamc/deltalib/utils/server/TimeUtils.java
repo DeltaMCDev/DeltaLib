@@ -1,4 +1,4 @@
-package team.deltadev.deltalib.utils;
+package dev.deltamc.deltalib.utils.server;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,12 +20,6 @@ public class TimeUtils {
         TIME_UNITS.put("ms", "millisecond");
     }
 
-    /**
-     * Converts a short time unit (e.g., "1d", "2h") to a full-formatted string (e.g., "1 day", "2 hours").
-     *
-     * @param shortTime The short time unit string.
-     * @return The full-formatted time string.
-     */
     public static String formatShortTime(String shortTime) {
         if (shortTime == null || shortTime.length() < 2) {
             throw new IllegalArgumentException("Invalid short time format.");
@@ -53,12 +47,6 @@ public class TimeUtils {
         return value + " " + unitFull + (value > 1 ? "s" : "");
     }
 
-    /**
-     * Converts a duration string to its equivalent in seconds.
-     *
-     * @param durationStr The duration string (e.g., "1d", "2h").
-     * @return The duration in seconds.
-     */
     public static long convertToSeconds(String durationStr) {
         if (durationStr == null || durationStr.length() < 2) {
             throw new IllegalArgumentException("Invalid duration format.");
@@ -90,12 +78,6 @@ public class TimeUtils {
         }
     }
 
-    /**
-     * Converts seconds to a full-formatted time string (e.g., "1 day", "2 hours").
-     *
-     * @param seconds The time in seconds.
-     * @return The full-formatted time string.
-     */
     public static String formatSeconds(long seconds) {
         if (seconds < 60) {
             return seconds + " second" + (seconds == 1 ? "" : "s");
@@ -120,11 +102,6 @@ public class TimeUtils {
         }
     }
 
-    /**
-     * Pauses the current thread for a specified duration in milliseconds.
-     *
-     * @param milliseconds The duration to pause in milliseconds.
-     */
     public static void sleepMillis(long milliseconds) {
         try {
             Thread.sleep(milliseconds);
@@ -134,34 +111,15 @@ public class TimeUtils {
         }
     }
 
-    /**
-     * Pauses the current thread for a specified duration in seconds.
-     *
-     * @param seconds The duration to pause in seconds.
-     */
     public static void sleepSeconds(long seconds) {
         sleepMillis(seconds * 1000);
     }
 
-    /**
-     * Formats a Date object to a string with the specified pattern.
-     *
-     * @param date    The Date object.
-     * @param pattern The pattern to format the date.
-     * @return The formatted date string.
-     */
     public static String formatDate(Date date, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.format(date);
     }
 
-    /**
-     * Parses a date string to a Date object with the specified pattern.
-     *
-     * @param dateString The date string to parse.
-     * @param pattern    The pattern to parse the date string.
-     * @return The corresponding Date object.
-     */
     public static Date parseDate(String dateString, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         try {
@@ -172,12 +130,6 @@ public class TimeUtils {
         }
     }
 
-    /**
-     * Converts a duration string to its equivalent in milliseconds.
-     *
-     * @param durationStr The duration string (e.g., "1d", "2h").
-     * @return The duration in milliseconds.
-     */
     public static long convertToMilliseconds(String durationStr) {
         if (durationStr == null || durationStr.length() < 2) {
             throw new IllegalArgumentException("Invalid duration format.");
@@ -210,12 +162,6 @@ public class TimeUtils {
         }
     }
 
-    /**
-     * Converts milliseconds to a full-formatted time string (e.g., "1 day", "2 hours").
-     *
-     * @param milliseconds The time in milliseconds.
-     * @return The full-formatted time string.
-     */
     public static String formatMilliseconds(long milliseconds) {
         if (milliseconds < 1000) {
             return milliseconds + " millisecond" + (milliseconds == 1 ? "" : "s");

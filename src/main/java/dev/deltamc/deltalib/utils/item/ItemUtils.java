@@ -1,4 +1,4 @@
-package team.deltadev.deltalib.utils;
+package dev.deltamc.deltalib.utils.item;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

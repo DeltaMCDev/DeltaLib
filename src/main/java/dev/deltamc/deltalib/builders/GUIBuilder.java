@@ -1,4 +1,4 @@
-package team.deltadev.deltalib.builders;
+package dev.deltamc.deltalib.builders;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -12,7 +12,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import team.deltadev.deltalib.utils.ItemUtils;
+import dev.deltamc.deltalib.utils.item.ItemUtils;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -53,48 +53,22 @@ public class GUIBuilder implements Listener {
         this.currentPage = 0;
     }
 
-    /**
-     * Sets an item in the GUI at a specific slot.
-     *
-     * @param slot    The slot to place the item.
-     * @param item    The item to place.
-     * @param action  The action to perform when the item is clicked.
-     * @return This GUIBuilder instance.
-     */
     public GUIBuilder setItem(int slot, ItemStack item, Consumer<InventoryClickEvent> action) {
         items.put(slot, item);
         actions.put(slot, action);
         return this;
     }
 
-    /**
-     * Sets an item in the GUI at a specific slot without an action.
-     *
-     * @param slot The slot to place the item.
-     * @param item The item to place.
-     * @return This GUIBuilder instance.
-     */
     public GUIBuilder setItem(int slot, ItemStack item) {
         items.put(slot, item);
         return this;
     }
 
-    /**
-     * Sets the action to perform when the inventory is closed.
-     *
-     * @param action The close action.
-     * @return This GUIBuilder instance.
-     */
     public GUIBuilder onClose(Consumer<InventoryCloseEvent> action) {
         this.closeAction = action;
         return this;
     }
 
-    /**
-     * Opens the GUI for a player.
-     *
-     * @param player The player to open the GUI for.
-     */
     public void open(Player player) {
         Inventory inventory = createInventory();
         player.openInventory(inventory);
@@ -112,11 +86,6 @@ public class GUIBuilder implements Listener {
         return inventory;
     }
 
-    /**
-     * Handles inventory click events.
-     *
-     * @param event The inventory click event.
-     */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
@@ -135,12 +104,6 @@ public class GUIBuilder implements Listener {
         }
     }
 
-
-    /**
-     * Handles inventory close events.
-     *
-     * @param event The inventory close event.
-     */
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player)) return;
@@ -156,34 +119,14 @@ public class GUIBuilder implements Listener {
         activeGUIs.remove(player);
     }
 
-
-    /**
-     * Registers the GUI builder as an event listener.
-     *
-     * @param plugin The plugin instance.
-     */
     public void register(JavaPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    /**
-     * Creates a simple item stack with a name and lore using ItemUtils.
-     *
-     * @param material The material of the item.
-     * @param name     The name of the item.
-     * @param lore     The lore of the item.
-     * @return The created item stack.
-     */
     public static ItemStack createItem(Material material, String name, String... lore) {
         return ItemUtils.createItem(material, ChatColor.translateAlternateColorCodes('&', name), Arrays.asList(lore));
     }
 
-    /**
-     * Adjusts the size of the inventory.
-     *
-     * @param size The new size.
-     * @return This GUIBuilder instance.
-     */
     public GUIBuilder setSize(int size) {
         if (inventoryType == null) {
             this.size = size;
@@ -191,17 +134,6 @@ public class GUIBuilder implements Listener {
         return this;
     }
 
-    /**
-     * Paginates the GUI items.
-     *
-     * @param items     The items to paginate.
-     * @param pageSize  The number of items per page.
-     * @param nextItem  The item for the next page button.
-     * @param prevItem  The item for the previous page button.
-     * @param nextAction The action for the next page button.
-     * @param prevAction The action for the previous page button.
-     * @return This GUIBuilder instance.
-     */
     public GUIBuilder paginate(List<ItemStack> items, int pageSize, ItemStack nextItem, ItemStack prevItem,
                                Consumer<InventoryClickEvent> nextAction, Consumer<InventoryClickEvent> prevAction) {
         for (int i = 0; i < items.size(); i += pageSize) {
@@ -214,12 +146,6 @@ public class GUIBuilder implements Listener {
         return this;
     }
 
-    /**
-     * Handles the logic for changing pages in a paginated GUI.
-     * This method is called when an item in the GUI is clicked and determines whether to move to the next or previous page.
-     *
-     * @param event The InventoryClickEvent triggered when an item in the inventory is clicked.
-     */
     private void handlePageChange(InventoryClickEvent event) {
         if (event.getCurrentItem() != null) {
             if (event.getCurrentItem().equals(nextPageItem) && currentPage < pages.size() - 1) {
@@ -234,13 +160,6 @@ public class GUIBuilder implements Listener {
         }
     }
 
-    /**
-     * Displays a specific page of items in the inventory.
-     * This method clears the current inventory and sets the items for the specified page.
-     *
-     * @param page      The page number to display.
-     * @param inventory The Inventory object where the items will be displayed.
-     */
     private void displayPage(int page, Inventory inventory) {
         inventory.clear();
         List<ItemStack> pageItems = pages.get(page);

@@ -1,5 +1,5 @@
 /*
- * This Metrics class was auto-generated and can be copied into your project if you are
+ * This bStats class was auto-generated and can be copied into your project if you are
  * not using a build tool like Gradle or Maven for dependency management.
  *
  * IMPORTANT: You are not allowed to modify this class, except changing the package.
@@ -12,7 +12,7 @@
  *
  * Violations will result in a ban of your plugin and account from bStats.
  */
-package team.deltadev.deltalib.bstats;
+package dev.deltamc.deltalib.analytics;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -47,20 +47,20 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Metrics {
+public class bStats {
 
     private final Plugin plugin;
 
     private final MetricsBase metricsBase;
 
     /**
-     * Creates a new Metrics instance.
+     * Creates a new bStats instance.
      *
      * @param plugin Your plugin instance.
      * @param serviceId The id of the service. It can be found at <a
      *     href="https://bstats.org/what-is-my-plugin-id">What is my plugin id?</a>
      */
-    public Metrics(JavaPlugin plugin, int serviceId) {
+    public bStats(JavaPlugin plugin, int serviceId) {
         this.plugin = plugin;
         // Get the config file
         File bStatsFolder = new File(plugin.getDataFolder().getParentFile(), "bStats");
@@ -157,7 +157,7 @@ public class Metrics {
 
     public static class MetricsBase {
 
-        /** The version of the Metrics class. */
+        /** The version of the bStats class. */
         public static final String METRICS_VERSION = "3.0.2";
 
         private static final String REPORT_URL = "https://bStats.org/api/v2/data/%s";
@@ -228,7 +228,7 @@ public class Metrics {
                 boolean logSentData,
                 boolean logResponseStatusText) {
             ScheduledThreadPoolExecutor scheduler =
-                    new ScheduledThreadPoolExecutor(1, task -> new Thread(task, "bStats-Metrics"));
+                    new ScheduledThreadPoolExecutor(1, task -> new Thread(task, "bStats-bStats"));
             // We want delayed tasks (non-periodic) that will execute in the future to be
             // cancelled when the scheduler is shutdown.
             // Otherwise, we risk preventing the server from shutting down even when
@@ -282,7 +282,7 @@ public class Metrics {
             // distribution of requests on the
             // bStats backend. To circumvent this problem, we introduce some randomness into
             // the initial and second delay.
-            // WARNING: You must not modify and part of this Metrics class, including the
+            // WARNING: You must not modify and part of this bStats class, including the
             // submit delay or frequency!
             // WARNING: Modifying this code will get your plugin banned on bStats. Just
             // don't do it!
@@ -337,7 +337,7 @@ public class Metrics {
             connection.addRequestProperty("Content-Encoding", "gzip");
             connection.addRequestProperty("Content-Length", String.valueOf(compressedData.length));
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("User-Agent", "Metrics-Service/1");
+            connection.setRequestProperty("User-Agent", "bStats-Service/1");
             connection.setDoOutput(true);
             try (DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream())) {
                 outputStream.write(compressedData);
@@ -370,7 +370,7 @@ public class Metrics {
                 // package names
                 if (MetricsBase.class.getPackage().getName().startsWith(defaultPackage)
                         || MetricsBase.class.getPackage().getName().startsWith(examplePackage)) {
-                    throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
+                    throw new IllegalStateException("bStats bStats class has not been relocated correctly!");
                 }
             }
         }

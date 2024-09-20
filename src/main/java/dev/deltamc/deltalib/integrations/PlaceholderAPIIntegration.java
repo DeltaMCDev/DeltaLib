@@ -1,10 +1,10 @@
-package team.deltadev.deltalib.integrations;
+package dev.deltamc.deltalib.integrations;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import team.deltadev.deltalib.utils.ChatUtils;
+import dev.deltamc.deltalib.utils.chat.ChatUtils;
 
 import java.util.logging.Level;
 
