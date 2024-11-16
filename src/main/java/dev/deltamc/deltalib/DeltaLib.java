@@ -5,7 +5,6 @@ import dev.deltamc.deltalib.utils.config.ConfigUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 import dev.deltamc.deltalib.updater.AutoUpdater;
 import dev.deltamc.deltalib.analytics.bStats;
-import dev.deltamc.deltalib.integrations.VaultIntegration;
 import dev.deltamc.deltalib.utils.chat.ChatUtils;
 
 import java.util.logging.Level;
@@ -18,12 +17,6 @@ public class DeltaLib extends JavaPlugin {
         getLogger().info("DeltaLib v" + version + " is enabling...");
 
         YamlDocument config = ConfigUtils.createConfig(this, "config.yml");
-
-        if (!VaultIntegration.setupEconomy(this)) {
-            ChatUtils.send(Level.SEVERE, "Disabling DeltaLib due to missing Vault dependency!");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
 
         try {
             new bStats(this, 22095);

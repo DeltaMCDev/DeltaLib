@@ -32,6 +32,7 @@ public class GUIBuilder implements Listener {
     private Consumer<InventoryClickEvent> nextPageAction;
     private Consumer<InventoryClickEvent> previousPageAction;
     private static final Map<Player, GUIBuilder> activeGUIs = new HashMap<>();
+    private boolean preventItemRemoval = false;
 
     public GUIBuilder(String title, int size) {
         this.title = ChatColor.translateAlternateColorCodes('&', title);
@@ -51,6 +52,11 @@ public class GUIBuilder implements Listener {
         this.items = new HashMap<>();
         this.pages = new ArrayList<>();
         this.currentPage = 0;
+    }
+
+    public GUIBuilder preventItemRemoval(boolean prevent) {
+        this.preventItemRemoval = prevent;
+        return this;
     }
 
     public GUIBuilder setItem(int slot, ItemStack item, Consumer<InventoryClickEvent> action) {
@@ -94,7 +100,11 @@ public class GUIBuilder implements Listener {
         GUIBuilder guiBuilder = activeGUIs.get(player);
         if (guiBuilder == null || !event.getView().getTitle().equals(guiBuilder.title)) return;
 
-        event.setCancelled(true);
+        // Prevent item removal if enabled
+        if (guiBuilder.preventItemRemoval) {
+            event.setCancelled(true);
+        }
+
         Consumer<InventoryClickEvent> action = guiBuilder.actions.get(event.getSlot());
         if (action != null) {
             action.accept(event);
@@ -119,8 +129,8 @@ public class GUIBuilder implements Listener {
         activeGUIs.remove(player);
     }
 
-    public void register(JavaPlugin plugin) {
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    public static void register(JavaPlugin plugin) {
+        plugin.getServer().getPluginManager().registerEvents(new GUIBuilder("", 0), plugin);
     }
 
     public static ItemStack createItem(Material material, String name, String... lore) {

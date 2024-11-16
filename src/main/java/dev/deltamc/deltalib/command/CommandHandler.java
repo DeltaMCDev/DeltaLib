@@ -9,6 +9,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import dev.deltamc.deltalib.utils.chat.ChatUtils;
 import dev.deltamc.deltalib.utils.config.ConfigUtils;
 import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.deltamc.deltalib.command.permission.PermissionManager;
+import dev.deltamc.deltalib.command.permission.PermissionManagerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -16,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
-
 
 public abstract class CommandHandler implements CommandExecutor, TabCompleter {
 
@@ -29,9 +30,13 @@ public abstract class CommandHandler implements CommandExecutor, TabCompleter {
     private static CommandMap commandMap;
     private static final String CONFIG_FILENAME = "settings.yml";
 
+    private final PermissionManager permissionManager;
+
     public CommandHandler(String name, JavaPlugin plugin) {
         this.name = name;
         this.config = ConfigUtils.createConfig(plugin, CONFIG_FILENAME);
+
+        this.permissionManager = PermissionManagerFactory.getPermissionManager();
 
         try {
             if (commandMap == null) {
@@ -79,6 +84,20 @@ public abstract class CommandHandler implements CommandExecutor, TabCompleter {
         }
         return null;
     }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (permission.isPresent() && !permissionManager.hasPermission(sender, permission.get())) {
+            String permissionMessage = ConfigUtils.getString(config, "SERVER.NO-PERMISSION");
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+                    Optional.ofNullable(permissionMessage).orElse("You don't have permission to use this command.")));
+            return true;
+        }
+
+        return handleCommand(sender, command, label, args);
+    }
+
+    public abstract boolean handleCommand(CommandSender sender, Command command, String label, String[] args);
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {

@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>team.deltadev</groupId>
+    <groupId>dev.deltamc</groupId>
     <artifactId>DeltaLib</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <packaging>jar</packaging>
 
     <name>DeltaLib</name>
@@ -94,7 +94,8 @@
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.11.5</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/PlaceholderAPI.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>dev.dejvokep</groupId>
@@ -124,10 +125,11 @@
             <version>5.0.2</version>
         </dependency>
         <dependency>
-            <groupId>com.github.MilkBowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
-            <scope>provided</scope>
+            <groupId>net.luckperms.api</groupId>
+            <artifactId>LuckPerms</artifactId>
+            <version>1.0.0.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/LuckPerms.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

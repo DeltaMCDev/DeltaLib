@@ -5,6 +5,4 @@ description: The main Lib class for all the Delta Plugins
 author: Akila
 softdepend:
   - PlaceholderAPI
-  - EnderTranslate
-depend:
-  - Vault
+  - LuckPerms
