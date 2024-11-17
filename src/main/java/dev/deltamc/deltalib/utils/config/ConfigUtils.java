@@ -23,7 +23,17 @@ public class ConfigUtils {
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
         }
+
         File configFile = new File(dataFolder, fileName);
+        File parentDir = configFile.getParentFile();
+        if (!parentDir.exists()) {
+            if (parentDir.mkdirs()) {
+                ChatUtils.send(Level.INFO, "Created directories for " + fileName);
+            } else {
+                ChatUtils.send(Level.SEVERE, "Failed to create directories for " + fileName);
+                return null;
+            }
+        }
 
         if (!configFile.exists() || configFile.length() == 0) {
             try (java.io.InputStream inputStream = plugin.getResource(fileName)) {
@@ -53,6 +63,7 @@ public class ConfigUtils {
             return null;
         }
     }
+
 
 
     public static List<String> getStringList(YamlDocument config, String path) {
